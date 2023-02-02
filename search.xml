@@ -716,4 +716,53 @@
 <p>More info: <a class="link"   href="https://hexo.io/docs/one-command-deployment.html" >Deployment <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
 ]]></content>
   </entry>
+  <entry>
+    <title>Pytorch Learn the Basics</title>
+    <url>/2023/02/02/Pytorch-Learn-the-Basics/</url>
+    <content><![CDATA[<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><ol>
+<li><p>首先安装miniconda</p>
+<p><a class="link"   href="https://zhuanlan.zhihu.com/p/44398592" >https://zhuanlan.zhihu.com/p/44398592 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+</li>
+<li><p>安装pytorch</p>
+<p><a class="link"   href="https://pytorch.org/get-started/locally/" >https://pytorch.org/get-started/locally/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+</li>
+</ol>
+<h1 id="pytorch简介"><a href="#pytorch简介" class="headerlink" title="pytorch简介"></a>pytorch简介</h1><p>pytorch是一种数据结构，语法和numpy差不多。</p>
+<h1 id="pytorch基础语法"><a href="#pytorch基础语法" class="headerlink" title="pytorch基础语法"></a>pytorch基础语法</h1><ol>
+<li><p>引入pytorch</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p>初始化tensor</p>
+<p>从显示数据，numpy数据，某个类型的pytorch数据，某个维度和形状中创建数据</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">data = [[<span class="number">1</span>, <span class="number">2</span>],[<span class="number">3</span>, <span class="number">4</span>]]</span><br><span class="line">x_data = torch.tensor(data)</span><br></pre></td></tr></table></figure></div>
+
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">np_array = np.array(data)</span><br><span class="line">x_np = torch.from_numpy(np_array)</span><br></pre></td></tr></table></figure></div>
+
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">x_ones = torch.ones_like(x_data) # retains the properties of x_data</span><br><span class="line">print(f&quot;Ones Tensor: \n &#123;x_ones&#125; \n&quot;)</span><br><span class="line"></span><br><span class="line">x_rand = torch.rand_like(x_data, dtype=torch.float) # overrides the datatype of x_data</span><br><span class="line">print(f&quot;Random Tensor: \n &#123;x_rand&#125; \n&quot;)</span><br></pre></td></tr></table></figure></div>
+
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">shape = (<span class="number">2</span>,<span class="number">3</span>,)</span><br><span class="line">rand_tensor = torch.rand(shape)</span><br><span class="line">ones_tensor = torch.ones(shape)</span><br><span class="line">zeros_tensor = torch.zeros(shape)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Random Tensor: \n <span class="subst">&#123;rand_tensor&#125;</span> \n&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Ones Tensor: \n <span class="subst">&#123;ones_tensor&#125;</span> \n&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Zeros Tensor: \n <span class="subst">&#123;zeros_tensor&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p>获取torch数据的属性</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">tensor = torch.rand(<span class="number">3</span>,<span class="number">4</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Shape of tensor: <span class="subst">&#123;tensor.shape&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Datatype of tensor: <span class="subst">&#123;tensor.dtype&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Device tensor is stored on: <span class="subst">&#123;tensor.device&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p>使用GPU运算</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># We move our tensor to the GPU if available</span></span><br><span class="line"><span class="keyword">if</span> torch.cuda.is_available():</span><br><span class="line">    tensor = tensor.to(<span class="string">&quot;cuda&quot;</span>)</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p>Numpy与Tensor相互转换，但实际的指针是一样的</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">t = torch.ones(<span class="number">5</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;t: <span class="subst">&#123;t&#125;</span>&quot;</span>)</span><br><span class="line">n = t.numpy()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;n: <span class="subst">&#123;n&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure></div>
+
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">t.add_(<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;t: <span class="subst">&#123;t&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;n: <span class="subst">&#123;n&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure></div>
+
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">n = np.ones(<span class="number">5</span>)</span><br><span class="line">t = torch.from_numpy(n)</span><br></pre></td></tr></table></figure></div>
+
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">np.add(n, <span class="number">1</span>, out=n)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;t: <span class="subst">&#123;t&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;n: <span class="subst">&#123;n&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure></div></li>
+</ol>
+]]></content>
+      <categories>
+        <category>pytorch</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
+      </tags>
+  </entry>
 </search>
