@@ -766,7 +766,7 @@
       </tags>
   </entry>
   <entry>
-    <title>Pytorch Datasets &amp; DataLoaders</title>
+    <title>Pytorch Datasets &amp;</title>
     <url>/2023/02/02/Pytorch-Datasets-DataLoaders/</url>
     <content><![CDATA[<h1 id="载入数据集"><a href="#载入数据集" class="headerlink" title="载入数据集"></a>载入数据集</h1><p>pytorch提供了两种数据集示例：torch.utils.data.Dataset包含了样本和标签，torch.utils.data.DataLoader包含了Datasets的样本。</p>
 <h1 id="加载数据集"><a href="#加载数据集" class="headerlink" title="加载数据集"></a>加载数据集</h1><p>加载Fashion-MNIST数据集，数据为28×28的灰度图像，包含十个种类</p>
@@ -780,13 +780,19 @@
 
 <p>torch.randint用法：<a class="link"   href="https://pytorch.org/docs/stable/generated/torch.randint.html#torch.randint" >https://pytorch.org/docs/stable/generated/torch.randint.html#torch.randint <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
 <h1 id="建立一个属于自己的数据集"><a href="#建立一个属于自己的数据集" class="headerlink" title="建立一个属于自己的数据集"></a>建立一个属于自己的数据集</h1><p>python关于类的定义：<a class="link"   href="https://zhuanlan.zhihu.com/p/30024792" >https://zhuanlan.zhihu.com/p/30024792 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure></div>
+<p>Dataset必须包含三个方法：__init__,__len__,__getitem__</p>
+<p>FashionMNIST把图像放在img_dir文件目录里，标签放在一个单独的CSV文件里</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">import os</span><br><span class="line">import pandas as pd</span><br><span class="line">from torchvision.io import read_image</span><br><span class="line"></span><br><span class="line">class CustomImageDataset(Dataset):</span><br><span class="line">    def __init__(self, annotations_file, img_dir, transform=None, target_transform=None):</span><br><span class="line">        self.img_labels = pd.read_csv(annotations_file)</span><br><span class="line">        self.img_dir = img_dir</span><br><span class="line">        self.transform = transform</span><br><span class="line">        self.target_transform = target_transform</span><br><span class="line"></span><br><span class="line">    def __len__(self):</span><br><span class="line">        return len(self.img_labels)</span><br><span class="line"></span><br><span class="line">    def __getitem__(self, idx):</span><br><span class="line">        img_path = os.path.join(self.img_dir, self.img_labels.iloc[idx, 0])</span><br><span class="line">        image = read_image(img_path)</span><br><span class="line">        label = self.img_labels.iloc[idx, 1]</span><br><span class="line">        if self.transform:</span><br><span class="line">            image = self.transform(image)</span><br><span class="line">        if self.target_transform:</span><br><span class="line">            label = self.target_transform(label)</span><br><span class="line">        return image, label</span><br></pre></td></tr></table></figure></div>
 
+<p>labels.csv文件形式</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">tshirt1.jpg, 0</span><br><span class="line">tshirt2.jpg, 0</span><br><span class="line">......</span><br><span class="line">ankleboot999.jpg, 9</span><br></pre></td></tr></table></figure></div>
 
+<h1 id="训练前的数据准备"><a href="#训练前的数据准备" class="headerlink" title="训练前的数据准备"></a>训练前的数据准备</h1><p>训练模型通常从总体中抽取部分数据多次洗牌再训练</p>
+<p>DataLoader是一个实现随机抽取数据的函数</p>
+<p>随机生成五次小数据集，并数据集的大小和第一张图</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader</span><br><span class="line"></span><br><span class="line">train_dataloader = DataLoader(training_data, batch_size=<span class="number">64</span>, shuffle=<span class="literal">True</span>)</span><br><span class="line">test_dataloader = DataLoader(test_data, batch_size=<span class="number">64</span>, shuffle=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure></div>
 
-
-
-
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">for i in range(5):</span><br><span class="line">	# Display image and label.</span><br><span class="line">    train_features, train_labels = next(iter(train_dataloader))</span><br><span class="line">    print(f&quot;Feature batch shape: &#123;train_features.size()&#125;&quot;)</span><br><span class="line">    print(f&quot;Labels batch shape: &#123;train_labels.size()&#125;&quot;)</span><br><span class="line">    img = train_features[0].squeeze()</span><br><span class="line">    label = train_labels[0]</span><br><span class="line">    plt.imshow(img, cmap=&quot;gray&quot;)</span><br><span class="line">    plt.show()</span><br><span class="line">    print(f&quot;Label: &#123;label&#125;&quot;)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
 
 
 
