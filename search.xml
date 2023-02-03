@@ -765,4 +765,39 @@
         <tag>pytorch</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Pytorch Datasets &amp; DataLoaders</title>
+    <url>/2023/02/02/Pytorch-Datasets-DataLoaders/</url>
+    <content><![CDATA[<h1 id="载入数据集"><a href="#载入数据集" class="headerlink" title="载入数据集"></a>载入数据集</h1><p>pytorch提供了两种数据集示例：torch.utils.data.Dataset包含了样本和标签，torch.utils.data.DataLoader包含了Datasets的样本。</p>
+<h1 id="加载数据集"><a href="#加载数据集" class="headerlink" title="加载数据集"></a>加载数据集</h1><p>加载Fashion-MNIST数据集，数据为28×28的灰度图像，包含十个种类</p>
+<p>root是地址</p>
+<p>train选择训练还是测试集</p>
+<p>download，如果本地没有该数据集则下载</p>
+<p>transform和target_transform未来会提及</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> Dataset</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> datasets</span><br><span class="line"><span class="keyword">from</span> torchvision.transforms <span class="keyword">import</span> ToTensor</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">training_data = datasets.FashionMNIST(</span><br><span class="line">    root=<span class="string">&quot;data&quot;</span>,</span><br><span class="line">    train=<span class="literal">True</span>,</span><br><span class="line">    download=<span class="literal">True</span>,</span><br><span class="line">    transform=ToTensor()</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">test_data = datasets.FashionMNIST(</span><br><span class="line">    root=<span class="string">&quot;data&quot;</span>,</span><br><span class="line">    train=<span class="literal">False</span>,</span><br><span class="line">    download=<span class="literal">True</span>,</span><br><span class="line">    transform=ToTensor()</span><br><span class="line">)</span><br></pre></td></tr></table></figure></div>
+
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">labels_map = &#123;</span><br><span class="line">    <span class="number">0</span>: <span class="string">&quot;T-Shirt&quot;</span>,</span><br><span class="line">    <span class="number">1</span>: <span class="string">&quot;Trouser&quot;</span>,</span><br><span class="line">    <span class="number">2</span>: <span class="string">&quot;Pullover&quot;</span>,</span><br><span class="line">    <span class="number">3</span>: <span class="string">&quot;Dress&quot;</span>,</span><br><span class="line">    <span class="number">4</span>: <span class="string">&quot;Coat&quot;</span>,</span><br><span class="line">    <span class="number">5</span>: <span class="string">&quot;Sandal&quot;</span>,</span><br><span class="line">    <span class="number">6</span>: <span class="string">&quot;Shirt&quot;</span>,</span><br><span class="line">    <span class="number">7</span>: <span class="string">&quot;Sneaker&quot;</span>,</span><br><span class="line">    <span class="number">8</span>: <span class="string">&quot;Bag&quot;</span>,</span><br><span class="line">    <span class="number">9</span>: <span class="string">&quot;Ankle Boot&quot;</span>,</span><br><span class="line">&#125;</span><br><span class="line">figure = plt.figure(figsize=(<span class="number">8</span>, <span class="number">8</span>))</span><br><span class="line">cols, rows = <span class="number">3</span>, <span class="number">3</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, cols * rows + <span class="number">1</span>):</span><br><span class="line">    sample_idx = torch.randint(<span class="built_in">len</span>(training_data), size=(<span class="number">1</span>,)).item()</span><br><span class="line">    <span class="comment"># 在0~数据集大小内生成一个torch类，torch由一个整数组成</span></span><br><span class="line">    img, label = training_data[sample_idx]</span><br><span class="line">    figure.add_subplot(rows, cols, i)</span><br><span class="line">    plt.title(labels_map[label])</span><br><span class="line">    plt.axis(<span class="string">&quot;off&quot;</span>)</span><br><span class="line">    plt.imshow(img.squeeze(), cmap=<span class="string">&quot;gray&quot;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure></div>
+
+<p>torch.randint用法：<a class="link"   href="https://pytorch.org/docs/stable/generated/torch.randint.html#torch.randint" >https://pytorch.org/docs/stable/generated/torch.randint.html#torch.randint <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h1 id="建立一个属于自己的数据集"><a href="#建立一个属于自己的数据集" class="headerlink" title="建立一个属于自己的数据集"></a>建立一个属于自己的数据集</h1><p>python关于类的定义：<a class="link"   href="https://zhuanlan.zhihu.com/p/30024792" >https://zhuanlan.zhihu.com/p/30024792 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+
+
+
+
+
+
+
+
+<p>官方文档：<a class="link"   href="https://pytorch.org/tutorials/beginner/basics/data_tutorial.html" >https://pytorch.org/tutorials/beginner/basics/data_tutorial.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+]]></content>
+      <categories>
+        <category>python</category>
+        <category>pytorch</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+      </tags>
+  </entry>
 </search>
