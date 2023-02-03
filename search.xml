@@ -806,4 +806,35 @@
         <tag>python</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Pytorch Transforms</title>
+    <url>/2023/02/03/Pytorch-Transforms/</url>
+    <content><![CDATA[<h1 id="数据转换"><a href="#数据转换" class="headerlink" title="数据转换"></a>数据转换</h1><blockquote>
+<p>所有 TorchVision 的 Dataset 都会有两个参数—— transform 用于修改特征，target_transform  用于修改标签——它们接受包含转换逻辑的可调用对象（其实就是接受函数对象）。 torchvision.transforms  模块提供了几种常见的转换。 </p>
+</blockquote>
+<p>部分数据需要转换后再使用，transform和target_transform用于转换数据</p>
+<p>torchvision.transforms包含了一些常用的模型</p>
+<p>ToTensor()把像素亮度转化为0~1之间的浮点数</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">import torch</span><br><span class="line">from torchvision import datasets</span><br><span class="line">from torchvision.transforms import ToTensor, Lambda</span><br><span class="line"></span><br><span class="line">ds = datasets.FashionMNIST(</span><br><span class="line">    root=&quot;data&quot;,</span><br><span class="line">    train=True,</span><br><span class="line">    download=True,</span><br><span class="line">    transform=ToTensor(),</span><br><span class="line">    target_transform=Lambda(lambda y: torch.zeros(10, dtype=torch.float).scatter_(0, torch.tensor(y), value=1))</span><br><span class="line">)</span><br></pre></td></tr></table></figure></div>
+
+
+
+
+
+
+
+<p>链接：</p>
+<p>热独编码：<a class="link"   href="https://blog.csdn.net/yanghaoji/article/details/123734304" >https://blog.csdn.net/yanghaoji/article/details/123734304 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link"   href="https://pytorch.org/docs/stable/generated/torch.Tensor.scatter_.html" >https://pytorch.org/docs/stable/generated/torch.Tensor.scatter_.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link"   href="https://blog.csdn.net/Lambert0320/article/details/127051472" >https://blog.csdn.net/Lambert0320/article/details/127051472 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>暂为明白y的意义</p>
+]]></content>
+      <categories>
+        <category>python</category>
+        <category>pytorch</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+      </tags>
+  </entry>
 </search>
