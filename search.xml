@@ -837,4 +837,76 @@
         <tag>python</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Pytorch Build The Neural Network</title>
+    <url>/2023/02/04/Pytorch-Build-The-Neural-Network/</url>
+    <content><![CDATA[<h1 id="建立神经网络"><a href="#建立神经网络" class="headerlink" title="建立神经网络"></a>建立神经网络</h1><p>看不懂的先跳过。</p>
+<p>神经网络由数据执行操作的层&#x2F;模块组成。torch.nn命名空间提供了你构建神经网络的所有构建块。一个神经网络自身就包含了其他模块。</p>
+<p>下面将建立一个神经网络对FashionMNIST数据集进行分类</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> datasets, transforms</span><br></pre></td></tr></table></figure></div>
+
+<p>尝试使用cuda</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">device = <span class="string">&quot;cuda&quot;</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&quot;cpu&quot;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Using <span class="subst">&#123;device&#125;</span> device&quot;</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p>通过继承nn.Module来创建神经网络的子类（一个模型），每个nn.Module子类都通过forward（前向传播）方法输入数据</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">NeuralNetwork</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(NeuralNetwork, self).__init__()</span><br><span class="line">        self.flatten = nn.Flatten()</span><br><span class="line">        self.linear_relu_stack = nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">28</span>*<span class="number">28</span>, <span class="number">512</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.Linear(<span class="number">512</span>, <span class="number">512</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.Linear(<span class="number">512</span>, <span class="number">10</span>),</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.flatten(x)</span><br><span class="line">        logits = self.linear_relu_stack(x)</span><br><span class="line">        <span class="keyword">return</span> logits</span><br></pre></td></tr></table></figure></div>
+
+<blockquote>
+<p>flatten方法的作用：实现简单的数据降维，把某些维度的数据重新编排成一个维度。 torch.nn.Flatten(<em>start_dim&#x3D;1</em>, <em>end_dim&#x3D;- 1</em>)，默认把除了第0维的所有数据重拍成一个维度</p>
+<p>Sequential的作用：它是一个容器允许模型顺序传入，顺序字典类型也能传入，把不同模块联系起来形成训练网络</p>
+<p>Linear的作用：建立一个线性函数$$y&#x3D;xA^T+b$$</p>
+<p>ReLu:参数*u()，保证非负</p>
+<p><a class="link"   href="https://pytorch.org/docs/stable/generated/torch.nn.Flatten.html#torch.nn.Flatten" >https://pytorch.org/docs/stable/generated/torch.nn.Flatten.html#torch.nn.Flatten <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link"   href="https://www.jianshu.com/p/9b6bde60f3e9" >https://www.jianshu.com/p/9b6bde60f3e9 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link"   href="https://pytorch.org/docs/stable/generated/torch.nn.Sequential.html#torch.nn.Sequential" >https://pytorch.org/docs/stable/generated/torch.nn.Sequential.html#torch.nn.Sequential <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link"   href="https://pytorch.org/docs/stable/generated/torch.nn.Linear.html#torch.nn.Linear" >https://pytorch.org/docs/stable/generated/torch.nn.Linear.html#torch.nn.Linear <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+</blockquote>
+<p>建立一个NeuralNetwork实例，把他放入设备中并打印结构</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">model = NeuralNetwork().to(device)</span><br><span class="line"><span class="built_in">print</span>(model)</span><br></pre></td></tr></table></figure></div>
+
+<p>使用这个模型，我们需要往里面传入数据，应该使用模型的forward方法？？</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">X = torch.rand(<span class="number">1</span>, <span class="number">28</span>, <span class="number">28</span>, device=device)</span><br><span class="line">logits = model(X)</span><br><span class="line">pred_probab = nn.Softmax(dim=<span class="number">1</span>)(logits)</span><br><span class="line">y_pred = pred_probab.argmax(<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Predicted class: <span class="subst">&#123;y_pred&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p>调用模型将会返回一个二维的Tensor，其中最后的输出是每个类型是10个原始预测输出，使用nn.Softmax进行归一化，得到最终概率</p>
+<h1 id="代码详解"><a href="#代码详解" class="headerlink" title="代码详解"></a>代码详解</h1><h2 id="建立图像"><a href="#建立图像" class="headerlink" title="建立图像"></a>建立图像</h2><p>模拟建立三幅28*28的灰度图像</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">input_image = torch.rand(<span class="number">3</span>,<span class="number">28</span>,<span class="number">28</span>)</span><br><span class="line"><span class="built_in">print</span>(input_image.size())</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="数据降维"><a href="#数据降维" class="headerlink" title="数据降维"></a>数据降维</h2><p>把一副图像的二维数据转换成一维</p>
+<p>flatten具体内容上方已提及</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">flatten = nn.Flatten()</span><br><span class="line">flat_image = flatten(input_image)</span><br><span class="line"><span class="built_in">print</span>(flat_image.size())</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="线性函数"><a href="#线性函数" class="headerlink" title="线性函数"></a>线性函数</h2><p>$$<br>y&#x3D;xA^T+b<br>$$</p>
+<p> torch.nn.Linear(<em>in_features</em>, <em>out_features</em>, <em>bias&#x3D;True</em>, <em>device&#x3D;None</em>, <em>dtype&#x3D;None</em>)</p>
+<p>下面将会看到线性函数中A的样子</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">layer1 = nn.Linear(in_features=<span class="number">28</span>*<span class="number">28</span>, out_features=<span class="number">20</span>)</span><br><span class="line">hidden1 = layer1(flat_image)</span><br><span class="line"><span class="built_in">print</span>(hidden1.size())</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="非线性化"><a href="#非线性化" class="headerlink" title="非线性化"></a>非线性化</h2><p>把小于0的数变成0，大于等于0的数保持原样</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Before ReLU: <span class="subst">&#123;hidden1&#125;</span>\n\n&quot;</span>)</span><br><span class="line">hidden1 = nn.ReLU()(hidden1)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;After ReLU: <span class="subst">&#123;hidden1&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="容器模块"><a href="#容器模块" class="headerlink" title="容器模块"></a>容器模块</h2><p>nn.Sequential可以把输入的模块按顺序的排列在容器中，形成新的模块（神经网络），传入容器的数据会被按顺序执行，这里对数据降维，线性映射，非线性化，再线性映射</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">seq_modules = nn.Sequential(</span><br><span class="line">    flatten,</span><br><span class="line">    layer1,</span><br><span class="line">    nn.ReLU(),</span><br><span class="line">    nn.Linear(<span class="number">20</span>, <span class="number">10</span>)</span><br><span class="line">)</span><br><span class="line">input_image = torch.rand(<span class="number">3</span>,<span class="number">28</span>,<span class="number">28</span>)</span><br><span class="line">logits = seq_modules(input_image)</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="概率归一化"><a href="#概率归一化" class="headerlink" title="概率归一化"></a>概率归一化</h2><p>把一个n维数据进行尺度变换，使得每一个数都落在[0,1]，所有数据加和为1<br>$$<br>Softmax(x_i)&#x3D;\frac{\exp(x_i)}{\sum_j \exp(x_j)}<br>$$<br>神经网络的最后一层是logits，使用nn.Softmax模块转换为每个类别的概率值</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">softmax = nn.Softmax(dim=<span class="number">1</span>)</span><br><span class="line">pred_probab = softmax(logits)</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="模型参数"><a href="#模型参数" class="headerlink" title="模型参数"></a>模型参数</h2><p>一个神经网络里的层都是参数化的，例如权重和偏置，nn.Module会自动记录所有变量，可以使用parameters()或named_parameters()方法获得参数。</p>
+<p>在这里我们可以看到神经网络的参数</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Model structure: <span class="subst">&#123;model&#125;</span>\n\n&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> name, param <span class="keyword">in</span> model.named_parameters():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Layer: <span class="subst">&#123;name&#125;</span> | Size: <span class="subst">&#123;param.size()&#125;</span> | Values : <span class="subst">&#123;param[:<span class="number">2</span>]&#125;</span> \n&quot;</span>)</span><br></pre></td></tr></table></figure></div>
+
+
+
+<blockquote>
+<p>参考：</p>
+<p><a class="link"   href="https://pytorch.org/tutorials/beginner/basics/buildmodel_tutorial.html" >https://pytorch.org/tutorials/beginner/basics/buildmodel_tutorial.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link"   href="https://blog.csdn.net/qq_40379132/article/details/124547449" >https://blog.csdn.net/qq_40379132/article/details/124547449 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>python</category>
+        <category>pytorch</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+      </tags>
+  </entry>
 </search>
